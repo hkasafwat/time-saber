@@ -6,7 +6,7 @@ export default {
     const timeRunning = ref(false);
     const now = ref(0);
     const minutes = ref(25);
-    const seconds = ref(0);
+    const seconds = ref('00');
     const then = ref(0);
     const countdown = ref({});
     const interval = ref(0);
@@ -16,25 +16,27 @@ export default {
 
       now.value = new Date().getTime();
       then.value = new Date();
-      console.log(minutes.value)
-      console.log(seconds.value)
-      console.log(then.value)
-      then.value.setMinutes(then.value.getMinutes() + minutes.value, then.value.getSeconds() + seconds.value);
-      console.log(then.value)
+
+      if(minutes.value > 59) {
+        let hrs = Math.floor(parseInt(minutes.value) / 60);
+        let mins = parseInt(minutes.value) % 60;
+        let secs = parseInt(seconds.value);
+
+        then.value.setHours(then.value.getHours() + hrs, then.value.getMinutes() + mins, then.value.getSeconds() + secs);
+      } else {
+        let mins = parseInt(minutes.value);
+        let secs = parseInt(seconds.value);
+
+        then.value.setMinutes(then.value.getMinutes() + mins, then.value.getSeconds() + secs);
+      }
 
       interval.value = setInterval(function () {
-        // countdown.value =  new Date(then.value.getTime() - new Date().getTime());
-        let test =  then.value.getTime() - new Date().getTime();
+        let millisecondsDiff =  then.value.getTime() - new Date().getTime();
         
-        var minutes = Math.floor(test / 60000);
-        var seconds = ((test % 60000) / 1000).toFixed(0);
-        countdown.value = {"minutes": minutes, "seconds": seconds}
-        // console.log(countdown.value)
-        // console.log(minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-        // console.log(minutes)
-        
-        // countdown.value =  ());
-      }, 1000);
+        let mins = Math.floor(millisecondsDiff / 60000);
+        let secs = ((millisecondsDiff % 60000) / 1000).toFixed(0);
+        countdown.value = {"minutes": mins, "seconds": secs}
+      }, 100);
     };
 
     const stopTimer = () => {
@@ -94,9 +96,9 @@ export default {
         <div class="text-8xl hover:bg-purple-400 cursor-pointer">00</div> -->
 
         <div class="flex">
-          <input class="container text-8xl hover:bg-purple-400 cursor-pointer" :placeholder="minutes" v-model="minutes">
-          <div class="text-8xl">:</div>
-          <input class="container text-8xl hover:bg-purple-400 cursor-pointer" :placeholder="seconds" v-model="seconds">
+          <input class="w-44 text-8xl hover:bg-purple-400 cursor-pointer rounded shadow p-2 text-center" :placeholder="minutes" v-model="minutes">
+          <div class="text-8xl mx-4">:</div>
+          <input class="w-44 text-8xl hover:bg-purple-400 cursor-pointer rounded shadow p-2 text-center" :placeholder="seconds" v-model="seconds">
         </div>
       </div>
     </div>
@@ -105,13 +107,13 @@ export default {
       <a
         href="#"
         @click="startTimer"
-        class="bg-green-400 py-3 px-4 font-bold text-2xl rounded"
+        class="bg-green-400 py-3 px-4 font-bold text-2xl rounded shadow"
         >Start</a
       >
       <a
         href="#"
         @click="stopTimer"
-        class="bg-red-400 py-3 px-4 font-bold text-2xl rounded"
+        class="bg-red-400 py-3 px-4 font-bold text-2xl rounded shadow"
         >Stop</a
       >
     </div>
